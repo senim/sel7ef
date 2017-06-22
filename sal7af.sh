@@ -1,5 +1,5 @@
 #!/bin/bash
-WEBSITE=WEBSITE.COM
+WEBSITE=2gis.ae
 
 for i in {1..99}
 do
