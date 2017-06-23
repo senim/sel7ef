@@ -17,10 +17,36 @@ function getLivingArea(item){
     return str;
 }
 
+function getTypeValue(item, type){
+   var r = ""
+   item["contact_groups"].forEach(function(g){
+        g.contacts.forEach(function(c){
+            if(!r && c.type == type){
+                r = c.value
+            }
+        })
+   })
+   return r
+}
+
+function getFax(item){
+    var r = ""
+    try{
+        item["contact_groups"].forEach(function(g){
+            g.contacts.forEach(function(c){
+            if(!r && c.comment == "fax")
+               r = c.value
+            })
+        })
+    }catch(e){
+        console.error(e)
+    }
+    return r
+}
 
 console.log("post_id,post_title,post_author,post_content,post_category,post_type,post_address,post_region,post_city,post_country,post_latitude,post_longitude") 
 
-
+var re=/http:.*\?/
 
 for (var i=1; i<100; i++){
     var json = require('./result/'+i+'.json');
@@ -38,9 +64,16 @@ for (var i=1; i<100; i++){
             post_city:  item.adm_div[0].name,
             post_country: "United Arab Emirates",
             post_latitude: item.point.lat,
-            post_longitude: item.point.lon
+            post_longitude: item.point.lon,
+            geodir_mob: getTypeValue(item, "phone"),
+            website: getTypeValue(item, "website").replace(re,""),
+            twitter: getTypeValue(item, "twitter"),
+            facebook: getTypeValue(item, "facebook"),
+            instagram: getTypeValue(item, "instagram"),
+            youtube: getTypeValue(item, "youtube"),
+            fax: getFax(item)
         }
-        console.log(`${r.post_id},"${r.post_title}","${r.post_author}","${r.post_content}","${r.post_category}","${r.post_type}","${r.post_address}","${r.post_region}","${r.post_city}","${r.post_country}","${r.post_latitude}","${r.post_longitude}"`)   
+        console.log(`${r.post_id},"${r.post_title}","${r.post_author}","${r.post_content}","${r.post_category}","${r.post_type}","${r.post_address}","${r.post_region}","${r.post_city}","${r.post_country}","${r.post_latitude}","${r.post_longitude}","${r.geodir_mob}","${r.website}","${r.twitter}","${r.facebook}","${r.instagram}","${r.youtube}","${r.fax}"`)
     })
 }
 
